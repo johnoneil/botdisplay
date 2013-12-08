@@ -1,0 +1,11 @@
+{% if urls_to_display %}
+    <table>
+	<th>id</th><th>URL</th><th>Display Time</th><th>Creation Date</th><th>Created By</th>
+    {% for urldisplay in urls_to_display %}
+	<tr><td>{{ urldisplay.id }}</td><td>{{ urldisplay.url }}</td><td>{{ urldisplay.display_time }}</td><td>{{ urldisplay.creation_date }}</td><td>{{ urldisplay.created_by }}</td></tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No urls currently set.</p>
+{% endif %}
+
