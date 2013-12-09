@@ -166,9 +166,11 @@ def main():
       for url in urls:
         if args.verbose:
           print 'opening ' + url
-        future = async_show_page_with_timeout(thread_pool, browser, url, time_to_display=10.0)
-        while not future.done():
-          pass#we could be doing something here.
+        show_page(browser, url)
+        timeout(30.0)
+        #future = async_show_page_with_timeout(thread_pool, browser, url, time_to_display=10.0)
+        #while not future.done():
+        #  pass#we could be doing something here.
         #at end of page display, updae URL list, detect changes and go back to start on change
         current_urls=set(urls)
         new_urls=update_urls_from_database()
