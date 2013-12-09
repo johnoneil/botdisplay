@@ -20,6 +20,33 @@ import time
 import argparse
 import os
 import concurrent.futures
+import sys
+
+try:
+  #we try to access django settings for the web interface to access
+  #the same sqlite3 database file
+  from botdisplay_webinterface import settings as bd_settings
+  #from botdisplay_webinterface import botdisplay as bd
+  #from botdisplay.models import botdisplay.models.URLDisplay
+  #from botdisplay_webinterface.botdisplay.models import URLDisplay
+  db_settings = bd_settings.DATABASES['default']
+  print 'engine is ' + db_settings['ENGINE']
+  print str(db_settings)
+  from django.conf import settings
+  settings.configure(
+    DATABASE_ENGINE = db_settings['ENGINE'],
+    DATABASE_NAME = db_settings['NAME'],
+    DATABASE_USER = db_settings['USER'],
+    DATABASE_PASSWORD = db_settings['PASSWORD'],
+    DATABASE_HOST = db_settings['HOST'],
+    DATABASE_PORT = db_settings['PORT'],
+    #TIME_ZONE = db_settings['TIME_ZONE'],
+    )
+  from botdisplay_webinterface import botdisplay as bd
+  from botdisplay_webinterface.botdisplay import models as bdmodels                  
+except ImportError:
+  print 'Could not import django settings file to access database.'
+  sys.exit(-1)
 
 def local_file(relative_url):
   '''
@@ -85,7 +112,7 @@ def async_show_page_with_timeout(thread_pool, browser, url, time_to_display):
   future = thread_pool.submit(show_page_with_timeout, thread_pool, browser, url, time_to_display)
   return future
 
-def update_urls_from_database(settings):
+def update_urls_from_database():
   '''
     Provided we have a Django settings module, we can use it
     to look for an associated database, and return a list of URLs
@@ -95,8 +122,8 @@ def update_urls_from_database(settings):
     type: :urls list of url strings
   '''
   urls = []
-  if not settings:
-    urls = [
+  '''
+  urls = [
         local_file('./media/spooky_skeleton_1.gif'),
         'http://nyaa.eu/',
         'http://youtube.googleapis.com/v/a_6CZ2JaEuc&autoplay=1',
@@ -104,26 +131,31 @@ def update_urls_from_database(settings):
         local_file('./media/smiling_white_dog.jpg'),
         'http://google.com'
       ]
-  else:
-    urls = []
-    #try to access database and return contents as list
-
+  '''
+  #try to access database and return contents as list
+  urls_db = bdmodels.URLDisplay.objects.all()
+  urls = []
+  for url in urls_db:
+    urls.append(url.url)
   return urls
   
 def main():
   parser = argparse.ArgumentParser(description='Drive browser via Selenium to N URLs in a cycle.')
   #parser.add_argument('infile', help='Input domain specific text description of C++ structures to generate.')
   parser.add_argument('-v','--verbose', help='Verbose operation. Print status messages during processing', action="store_true")
-  parser.add_argument('-s','--settings', help='Django settings.py file containing database info to drive display',default=None)
+  #parser.add_argument('-s','--settings', help='Django settings.py file containing database info to drive display',default=None)
   args = parser.parse_args()
 
-  settings = args.settings
+  db_settings = {}
+   
   #TODO: regex check for youtube links and reformat them as:
   #original link: http://www.youtube.com/v/GsF1jnTjRLo
   #fullscreen autoplaying link: https://youtube.googleapis.com/v/GsF1jnTjRLo%26hd=1%20%26autoplay=1
   #where  '&autoplay=1' specifies autoplay and  '&hd=1' is hd version,
   #and using youtube.googleapis.com goes fullscreen
-  urls = update_urls_from_database(settings)
+  urls = update_urls_from_database()
+
+  print 'urls are ' + str(urls)
 
   #spin off tasks asynchronously
   with concurrent.futures.ThreadPoolExecutor(max_workers=10) as thread_pool:
@@ -139,7 +171,7 @@ def main():
           pass#we could be doing something here.
         #at end of page display, updae URL list, detect changes and go back to start on change
         current_urls=set(urls)
-        new_urls=update_urls_from_database(settings)
+        new_urls=update_urls_from_database()
         if len(set(new_urls)-current_urls)>0:
           urls = new_urls
           break
