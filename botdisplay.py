@@ -84,35 +84,65 @@ def async_show_page_with_timeout(thread_pool, browser, url, time_to_display):
   '''
   future = thread_pool.submit(show_page_with_timeout, thread_pool, browser, url, time_to_display)
   return future
+
+def update_urls_from_database(settings):
+  '''
+    Provided we have a Django settings module, we can use it
+    to look for an associated database, and return a list of URLs
+    from the database.
+    arg: settings Django settings.py file that provides database info
+    returns: :urls list of URLs from database
+    type: :urls list of url strings
+  '''
+  urls = []
+  if not settings:
+    urls = [
+        local_file('./media/spooky_skeleton_1.gif'),
+        'http://nyaa.eu/',
+        'http://youtube.googleapis.com/v/a_6CZ2JaEuc&autoplay=1',
+        'http://drudgereport.com/',
+        local_file('./media/smiling_white_dog.jpg'),
+        'http://google.com'
+      ]
+  else:
+    urls = []
+    #try to access database and return contents as list
+
+  return urls
   
 def main():
-  #TODO: move towards DB driven list of urls and other events
-  #TODO: embed in cyclone(?) web app framework
+  parser = argparse.ArgumentParser(description='Drive browser via Selenium to N URLs in a cycle.')
+  #parser.add_argument('infile', help='Input domain specific text description of C++ structures to generate.')
+  parser.add_argument('-v','--verbose', help='Verbose operation. Print status messages during processing', action="store_true")
+  parser.add_argument('-s','--settings', help='Django settings.py file containing database info to drive display',default=None)
+  args = parser.parse_args()
+
+  settings = args.settings
   #TODO: regex check for youtube links and reformat them as:
   #original link: http://www.youtube.com/v/GsF1jnTjRLo
   #fullscreen autoplaying link: https://youtube.googleapis.com/v/GsF1jnTjRLo%26hd=1%20%26autoplay=1
   #where  '&autoplay=1' specifies autoplay and  '&hd=1' is hd version,
   #and using youtube.googleapis.com goes fullscreen
-  urls = [
-      #'http://192.168.1.3/',
-      local_file('./media/spooky_skeleton_1.gif'),
-      'http://nyaa.eu/',
-      'http://youtube.googleapis.com/v/a_6CZ2JaEuc&autoplay=1',
-      'http://drudgereport.com/',
-      local_file('./media/smiling_white_dog.jpg'),
-      'http://google.com'
-    ]
+  urls = update_urls_from_database(settings)
 
   #spin off tasks asynchronously
   with concurrent.futures.ThreadPoolExecutor(max_workers=10) as thread_pool:
     #browser =  webdriver.chrome()
     browser =  webdriver.Firefox()
   
-    for url in urls:
-      print 'opening ' + url
-      future = async_show_page_with_timeout(thread_pool, browser, url, time_to_display=10.0)
-      while not future.done():
-        pass#we could be doing something here.
+    while len(urls)>0:
+      for url in urls:
+        if args.verbose:
+          print 'opening ' + url
+        future = async_show_page_with_timeout(thread_pool, browser, url, time_to_display=10.0)
+        while not future.done():
+          pass#we could be doing something here.
+        #at end of page display, updae URL list, detect changes and go back to start on change
+        current_urls=set(urls)
+        new_urls=update_urls_from_database(settings)
+        if len(set(new_urls)-current_urls)>0:
+          urls = new_urls
+          break
 
     browser.quit()
 
