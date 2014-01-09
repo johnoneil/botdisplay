@@ -25,25 +25,31 @@ import sys
 try:
   #we try to access django settings for the web interface to access
   #the same sqlite3 database file
-  from botdisplay_webinterface import settings as bd_settings
+  
+  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_botdisplay.settings")
+
+  #from botdisplay_webinterface import settings as bd_settings
+  
   #from botdisplay_webinterface import botdisplay as bd
   #from botdisplay.models import botdisplay.models.URLDisplay
   #from botdisplay_webinterface.botdisplay.models import URLDisplay
-  db_settings = bd_settings.DATABASES['default']
-  print 'engine is ' + db_settings['ENGINE']
-  print str(db_settings)
-  from django.conf import settings
-  settings.configure(
-    DATABASE_ENGINE = db_settings['ENGINE'],
-    DATABASE_NAME = db_settings['NAME'],
-    DATABASE_USER = db_settings['USER'],
-    DATABASE_PASSWORD = db_settings['PASSWORD'],
-    DATABASE_HOST = db_settings['HOST'],
-    DATABASE_PORT = db_settings['PORT'],
-    #TIME_ZONE = db_settings['TIME_ZONE'],
-    )
-  from botdisplay_webinterface import botdisplay as bd
-  from botdisplay_webinterface.botdisplay import models as bdmodels                  
+  #db_settings = bd_settings.DATABASES['default']
+  #print 'engine is ' + db_settings['ENGINE']
+  #print str(db_settings)
+  #from django.conf import settings
+  #settings.configure(
+  #  DATABASE_ENGINE = db_settings['ENGINE'],
+  #  DATABASE_NAME = db_settings['NAME'],
+  #  DATABASE_USER = db_settings['USER'],
+  #  DATABASE_PASSWORD = db_settings['PASSWORD'],
+  #  DATABASE_HOST = db_settings['HOST'],
+  #  DATABASE_PORT = db_settings['PORT'],
+  #  #TIME_ZONE = db_settings['TIME_ZONE'],
+  #  )
+
+  #from botdisplay_webinterface import botdisplay as bd
+  #from botdisplay_webinterface.botdisplay import models as bdmodels
+  from botdisplay_web import models as bdmodels                  
 except ImportError:
   print 'Could not import django settings file to access database.'
   sys.exit(-1)

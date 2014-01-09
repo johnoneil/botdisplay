@@ -5,6 +5,7 @@
 
 #sqlite3 database files
 *.db
+*.sqlite3
 
 # Packages
 *.egg
