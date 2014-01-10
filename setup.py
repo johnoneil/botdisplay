@@ -19,16 +19,19 @@ setup(name='botdisplay',
     author='John O\'Neil',
     author_email='oneil.john@gmail.com',
     license='MIT',
-    packages=['botdisplay'],
+    packages=['botdisplay','botdisplay.django_botdisplay','botdisplay.botdisplay_web'],#packages=['foobar', 'foobar.subfoo'],
     install_requires=[
         'selenium',
         'django',
         'argparse'
       ],
-	package_data = {
-		'webircclient': ['botdisplay/*.html', 'static/*.css','static/*.img'],
-	},
-    #entry_points = {
-#		'console_scripts': ['botdisplay-webinte=webircclient.server:main'],
- #   },
-      zip_safe=True)
+	#package_data = {
+	#	'botdisplay': ['botdisplay/*.html', 'static/*.css','static/*.img'],
+	#},
+    entry_points = {
+		'console_scripts': [
+            'botdisplay-driver=botdisplay.botdisplay:main',
+            'botdisplay-django-manage=botdisplay.manage:main',
+        ],
+    },
+    zip_safe=True)
