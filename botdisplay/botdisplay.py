@@ -26,8 +26,8 @@ try:
   #we try to access django settings for the web interface to access
   #the same sqlite3 database file
   
-  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "botdisplay.django_botdisplay.settings")
-  from .botdisplay_web import models as bdmodels                  
+  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "botdisplay.django_server.settings")
+  from .botdisplay_webservice import models as bdmodels                  
 except ImportError:
   print 'Could not import django settings file to access database.'
   sys.exit(-1)

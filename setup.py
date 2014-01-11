@@ -19,7 +19,11 @@ setup(name='botdisplay',
     author='John O\'Neil',
     author_email='oneil.john@gmail.com',
     license='MIT',
-    packages=['botdisplay','botdisplay.django_botdisplay','botdisplay.botdisplay_web'],#packages=['foobar', 'foobar.subfoo'],
+    packages=[
+	    'botdisplay',
+	    'botdisplay.django_server',
+	    'botdisplay.botdisplay_webservice'
+    ],
     install_requires=[
         'selenium',
         'django',

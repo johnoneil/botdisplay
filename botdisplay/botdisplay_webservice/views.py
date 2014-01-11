@@ -1,7 +1,7 @@
 # vim: set ts=2 expandtab:
 # Create your views here.
 from django.template import Context, loader
-from botdisplay.models import URLDisplay
+from botdisplay.botdisplay_webservice.models import URLDisplay
 from django.http import HttpResponse
 
 def index(request):

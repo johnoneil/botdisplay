@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'botdisplay.botdisplay_web',
+    'botdisplay.botdisplay_webservice',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -48,9 +48,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'botdisplay.django_botdisplay.urls'
+ROOT_URLCONF = 'botdisplay.django_server.urls'
 
-WSGI_APPLICATION = 'botdisplay.django_botdisplay.wsgi.application'
+WSGI_APPLICATION = 'botdisplay.django_server.wsgi.application'
 
 
 # Database
