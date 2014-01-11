@@ -29,9 +29,9 @@ setup(name='botdisplay',
         'django',
         'argparse'
       ],
-	#package_data = {
-	#	'botdisplay': ['botdisplay/*.html', 'static/*.css','static/*.img'],
-	#},
+	package_data = {
+		'': ['*.html', '*.rst'],
+	},
     entry_points = {
 		'console_scripts': [
             'botdisplay-driver=botdisplay.botdisplay:main',

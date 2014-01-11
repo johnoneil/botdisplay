@@ -4,9 +4,9 @@ from django.template import Context, loader
 from botdisplay.botdisplay_webservice.models import URLDisplay
 from django.http import HttpResponse
 
-def index(request):
+def home(request):
   urls_to_display = URLDisplay.objects.all()
-  t = loader.get_template('botdisplay/index.html')
+  t = loader.get_template('botdisplay_webservice/index.html')
   c = Context({
     'urls_to_display': urls_to_display,
     })
